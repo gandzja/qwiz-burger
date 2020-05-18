@@ -11,81 +11,33 @@ document.addEventListener('DOMContentLoaded', function () {
   const nextButton = document.querySelector('#next');
   const sendButton = document.querySelector('#send');
 
-  // объект содержащий вопросы и ответы
-  const questions = [
-    {
-      question: 'Какого цвета бургер?',
-      answers: [
-        {
-          title: 'Стандарт',
-          url: './image/burger.png',
-        },
-        {
-          title: 'Черный',
-          url: './image/burgerBlack.png',
-        },
-      ],
-      type: 'radio',
-    },
-    {
-      question: 'Из какого мяса котлета?',
-      answers: [
-        {
-          title: 'Курица',
-          url: './image/chickenMeat.png',
-        },
-        {
-          title: 'Говядина',
-          url: './image/beefMeat.png',
-        },
-        {
-          title: 'Свинина',
-          url: './image/porkMeat.png',
-        },
-      ],
-      type: 'radio',
-    },
-    {
-      question: 'Дополнительные ингредиенты?',
-      answers: [
-        {
-          title: 'Помидор',
-          url: './image/tomato.png',
-        },
-        {
-          title: 'Огурец',
-          url: './image/cucumber.png',
-        },
-        {
-          title: 'Салат',
-          url: './image/salad.png',
-        },
-        {
-          title: 'Лук',
-          url: './image/onion.png',
-        },
-      ],
-      type: 'checkbox',
-    },
-    {
-      question: 'Добавить соус?',
-      answers: [
-        {
-          title: 'Чесночный',
-          url: './image/sauce1.png',
-        },
-        {
-          title: 'Томатный',
-          url: './image/sauce2.png',
-        },
-        {
-          title: 'Горчичный',
-          url: './image/sauce3.png',
-        },
-      ],
-      type: 'radio',
-    },
-  ];
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: 'AIzaSyCz5-aUZw59gmVy_I45x8d9tdOox3aBGoE',
+    authDomain: 'quizburger-9f86e.firebaseapp.com',
+    databaseURL: 'https://quizburger-9f86e.firebaseio.com',
+    projectId: 'quizburger-9f86e',
+    storageBucket: 'quizburger-9f86e.appspot.com',
+    messagingSenderId: '388081963856',
+    appId: '1:388081963856:web:2d7260ece57a7a6666d255',
+    measurementId: 'G-NJS0YF6EE9',
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // функция получения данных
+  const getData = () => {
+    formAnswers.textContent = 'LOAD';
+
+    nextButton.classList.add('d-none');
+    prevButton.classList.add('d-none');
+    firebase
+      .database()
+      .ref()
+      .child('questions')
+      .once('value')
+      .then(snap => playTest(snap.val()));
+  };
 
   let clientWidth = document.documentElement.clientWidth;
 
@@ -119,8 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
   btnOpenModal.addEventListener('click', () => {
     modalBlock.classList.add('d-block');
     burgerBtn.classList.add('active');
-
-    playTest();
+    getData();
   });
   closeModal.addEventListener('click', () => {
     modalBlock.classList.remove('d-block');
@@ -135,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // функция тестирования
-  const playTest = () => {
+  const playTest = questions => {
     const finalAnswers = [];
 
     // переменная с номером вопроса
@@ -230,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
       checkAnswer();
       numberQuestion++;
       renderQuestion(numberQuestion);
-      console.log(finalAnswers);
+      firebase.database().ref().child('contacts').push(finalAnswers);
     };
   };
 });
